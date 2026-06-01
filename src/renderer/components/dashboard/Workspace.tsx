@@ -17,7 +17,13 @@ interface WorkspaceProps {
 
 function UpdatePatchButton({ updater }: { updater: AppUpdateController }) {
   const visible = updater.status === "available" || updater.status === "downloading" || updater.status === "installing" || updater.status === "readyToRestart";
-  if (!visible) return null;
+  if (!visible) {
+    return (
+      <span className="app-version-badge" title="Installed app version">
+        v{updater.appVersion}
+      </span>
+    );
+  }
 
   const progress = updater.contentLength ? Math.min(99, Math.round((updater.downloadedBytes / updater.contentLength) * 100)) : undefined;
   const isBusy = updater.status === "downloading" || updater.status === "installing";

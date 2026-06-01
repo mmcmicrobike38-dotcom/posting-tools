@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { getVersion } from "@tauri-apps/api/app";
 import { relaunch } from "@tauri-apps/plugin-process";
 import { check, type DownloadEvent, type Update } from "@tauri-apps/plugin-updater";
 
@@ -9,6 +10,7 @@ type UpdateStatus = "idle" | "checking" | "available" | "downloading" | "install
 
 export interface AppUpdateController {
   status: UpdateStatus;
+  appVersion: string;
   version?: string;
   body?: string;
   downloadedBytes: number;
@@ -27,6 +29,7 @@ export function useAppUpdater(): AppUpdateController {
   const updateRef = useRef<Update | null>(null);
   const mountedRef = useRef(true);
   const [status, setStatus] = useState<UpdateStatus>("idle");
+  const [appVersion, setAppVersion] = useState(__APP_VERSION__);
   const [version, setVersion] = useState<string>();
   const [body, setBody] = useState<string>();
   const [downloadedBytes, setDownloadedBytes] = useState(0);
@@ -111,6 +114,17 @@ export function useAppUpdater(): AppUpdateController {
 
   useEffect(() => {
     mountedRef.current = true;
+
+    if (isTauriRuntime()) {
+      void getVersion()
+        .then((nextVersion) => {
+          if (mountedRef.current) setAppVersion(nextVersion);
+        })
+        .catch((nextError) => {
+          console.error("App version lookup failed", nextError);
+        });
+    }
+
     void checkForUpdates();
 
     return () => {
@@ -120,6 +134,7 @@ export function useAppUpdater(): AppUpdateController {
 
   return {
     status,
+    appVersion,
     version,
     body,
     downloadedBytes,
