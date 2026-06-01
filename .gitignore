@@ -5,6 +5,9 @@ __pycache__/
 .pytest-tmp*/
 .pytest-all*/
 logs/
+*.key
+*.key.password
+.tauri/
 config/service_account.json
 config/oauth_client.json
 data/oauth_tokens/

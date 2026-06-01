@@ -1,11 +1,12 @@
 {
     "name": "posting-tools",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "private": true,
     "description": "Tauri + React + TypeScript desktop app for posting automation.",
     "scripts": {
         "vite:dev": "vite --config vite.config.mjs --configLoader runner --host 127.0.0.1 --port 1420",
         "build:renderer": "vite build --config vite.config.mjs --configLoader runner",
+        "tauri": "tauri",
         "tauri:dev": "tauri dev",
         "dev:tauri": "npm run tauri:dev",
         "dev": "npm run tauri:dev",
@@ -15,6 +16,7 @@
         "test:python": ".\\.venv\\Scripts\\python.exe -m pytest tests -q -p no:cacheprovider",
         "verify": "npm run build && npm run test:python",
         "tauri:build": "npx tauri build",
+        "release:updater:win": "powershell -ExecutionPolicy Bypass -File scripts\\build_updater_release.ps1",
         "installer": "powershell -ExecutionPolicy Bypass -File scripts\\build_release.ps1",
         "portable": "powershell -ExecutionPolicy Bypass -File scripts\\make_portable.ps1",
         "release": "npm run installer",
@@ -37,6 +39,8 @@
     "dependencies": {
         "@tailwindcss/vite": "^4.3.0",
         "@tanstack/react-table": "^8.21.3",
+        "@tauri-apps/plugin-process": "^2.3.1",
+        "@tauri-apps/plugin-updater": "^2.10.1",
         "@vitejs/plugin-react": "^5.0.0",
         "better-sqlite3": "^12.0.0",
         "class-variance-authority": "^0.7.1",
