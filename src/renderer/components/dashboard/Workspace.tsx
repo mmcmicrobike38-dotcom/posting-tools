@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Download, RotateCw } from "lucide-react";
 import { SimsoftDashboardModel } from "../../hooks/useSimsoftDashboard";
+import type { AppUpdateController } from "../../services/updateService";
 import { NextStepPanel } from "../ui/Primitives";
 import { GoogleLinkScanner } from "../layout/GoogleLinkScanner";
 import { SwipeToPostButton } from "../layout/SwipeToPostButton";
@@ -10,6 +12,41 @@ import { displayValue, friendlyIssueText, initialsFromName } from "./workspaceFo
 
 interface WorkspaceProps {
   dashboard: SimsoftDashboardModel;
+  updater: AppUpdateController;
+}
+
+function UpdatePatchButton({ updater }: { updater: AppUpdateController }) {
+  const visible = updater.status === "available" || updater.status === "downloading" || updater.status === "installing" || updater.status === "readyToRestart";
+  if (!visible) return null;
+
+  const progress = updater.contentLength ? Math.min(99, Math.round((updater.downloadedBytes / updater.contentLength) * 100)) : undefined;
+  const isBusy = updater.status === "downloading" || updater.status === "installing";
+  const isRestartReady = updater.status === "readyToRestart";
+  const label = isRestartReady
+    ? "Restart"
+    : updater.status === "installing"
+      ? "Installing"
+      : updater.status === "downloading"
+        ? progress
+          ? `Downloading ${progress}%`
+          : "Downloading"
+        : updater.version
+          ? `Update ${updater.version}`
+          : "Update";
+
+  return (
+    <button
+      className={isRestartReady ? "update-patch-button restart-ready" : isBusy ? "update-patch-button loading" : "update-patch-button"}
+      type="button"
+      onClick={isRestartReady ? updater.restartApp : updater.installUpdate}
+      disabled={isBusy}
+      aria-label={isRestartReady ? "Restart to finish update" : "Download and install update"}
+      title={updater.body || label}
+    >
+      {isRestartReady ? <RotateCw aria-hidden="true" size={15} /> : <Download aria-hidden="true" size={15} />}
+      <span>{label}</span>
+    </button>
+  );
 }
 
 type OperatorStep = {
@@ -157,7 +194,7 @@ function buildOperatorStep({ state, derived, actions }: SimsoftDashboardModel): 
   };
 }
 
-export function Workspace({ dashboard }: WorkspaceProps) {
+export function Workspace({ dashboard, updater }: WorkspaceProps) {
   const { state, derived, actions } = dashboard;
   const [activeFunction, setActiveFunction] = useState<string | null>(null);
   const [openAttentionPanel, setOpenAttentionPanel] = useState<AttentionPanel>(null);
@@ -421,6 +458,9 @@ export function Workspace({ dashboard }: WorkspaceProps) {
             <h2>{operatorName}</h2>
             <p>{operatorRole}</p>
           </div>
+        </div>
+        <div className="toolbar-update-slot" aria-live="polite">
+          <UpdatePatchButton updater={updater} />
         </div>
         <div className="toolbar-actions">
           <div className="toolbar-status-group" aria-label="Current posting context">
