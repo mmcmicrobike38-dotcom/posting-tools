@@ -1,0 +1,49 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Posting Tools",
+  "version": "0.1.0",
+  "identifier": "com.simsoft.posting",
+  "plugins": {},
+  "build": {
+    "beforeDevCommand": "npm run vite:dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npm run build:renderer",
+    "frontendDist": "../dist/renderer"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Posting Tools",
+        "width": 1280,
+        "height": 820,
+        "minWidth": 1080,
+        "minHeight": 700,
+        "center": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' asset: http://asset.localhost data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["msi", "nsis"],
+    "publisher": "SIMSOFT",
+    "category": "Business",
+    "shortDescription": "Posting Tools Google Sheets posting automation desktop app.",
+    "longDescription": "Enterprise desktop app for validating SIMSOFT exports, previewing posting updates, and writing controlled Google Sheets postings.",
+    "icon": [
+      "icons/icon.ico"
+    ],
+    "resources": [
+      "../assets",
+      "../config/oauth_client.json",
+      "../config/oauth_client.example.json",
+      "../scripts/python_bridge.py",
+      "../dist-python",
+      "../core",
+      "../python_backend",
+      "../requirements.txt"
+    ]
+  }
+}

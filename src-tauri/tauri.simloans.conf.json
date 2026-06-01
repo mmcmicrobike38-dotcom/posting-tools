@@ -1,0 +1,47 @@
+{
+    "$schema":  "https://schema.tauri.app/config/2",
+    "productName":  "SIMLoans V3",
+    "version":  "0.1.0",
+    "identifier":  "com.simsoft.simloansv3",
+    "plugins":  {
+
+                },
+    "build":  {
+                  "beforeDevCommand":  "npm run simloans:vite:dev",
+                  "devUrl":  "http://localhost:1421/?app=simloans-v3#/dashboard",
+                  "beforeBuildCommand":  "npm run build:renderer",
+                  "frontendDist":  "../dist/renderer"
+              },
+    "app":  {
+                "windows":  [
+                                {
+                                    "title":  "SIMLoans V3",
+                                    "width":  1280,
+                                    "height":  820,
+                                    "minWidth":  1080,
+                                    "minHeight":  700,
+                                    "center":  true
+                                }
+                            ],
+                "security":  {
+                                 "csp":  "default-src \u0027self\u0027; img-src \u0027self\u0027 asset: http://asset.localhost data: blob:; style-src \u0027self\u0027 \u0027unsafe-inline\u0027; script-src \u0027self\u0027"
+                             }
+            },
+    "bundle":  {
+                   "active":  true,
+                   "targets":  [
+                                   "msi",
+                                   "nsis"
+                               ],
+                   "publisher":  "SIMSOFT",
+                   "category":  "Business",
+                   "shortDescription":  "SIMLoans V3 loan servicing, collection management, and CRM desktop foundation.",
+                   "longDescription":  "Recreated SIMLoans desktop app for customer account management, loan ledger tracking, payment posting, aging, reports, and office administration.",
+                   "icon":  [
+                                "icons/icon.ico"
+                            ],
+                   "resources":  [
+                                     "../assets"
+                                 ]
+               }
+}

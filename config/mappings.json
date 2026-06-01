@@ -1,0 +1,32 @@
+{
+  "header_rows": {
+    "ACCOUNTS": 3,
+    "1-28": 1,
+    "1-29": 1,
+    "1-30": 1,
+    "1-31": 1,
+    "RECIEPT": 1,
+    "SCR VS BR": 1
+  },
+  "branch_folder_scan_enabled": true,
+  "branch_file_pattern": "MMC\\d{3}",
+  "accounts_tab_name": "ACCOUNTS",
+  "ibp_to_other_branch_label": "IBP TO OTHER BRANCH",
+  "ibp_from_other_branch_label": "IBP FROM OTHER BRANCH",
+  "daily_ibp_column_name": "IBP",
+  "header_rows": {
+    "ACCOUNTS": 3,
+    "1-28": 1,
+    "1-29": 1,
+    "1-30": 1,
+    "1-31": 1,
+    "RECIEPT": 1,
+    "SCR VS BR": 1
+  },
+  "tabs": {
+    "ACCOUNTS": ["ACCOUNT", "DATE", "REF", "REB", "CASH", "DP", "CM", "CM TO M", "M", "PENALTY", "OTHERS", "REPO", "SIMSOFT LEDGER BALANCE"],
+    "DAILY": ["DATE", "OR", "ACCOUNT #", "ACCOUNT NAME", "PARTICULARS", "CASH", "DP", "MI", "CM", "REBATE", "PEN", "TOTAL"],
+    "RECIEPT": ["Series", "Type", "Date", "Amount"],
+    "SCR VS BR": ["SCR DATE", "AMOUNT", "FROM", "TO", "AMOUNT"]
+  }
+}

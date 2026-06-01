@@ -1,0 +1,495 @@
+.simv3-login-screen,
+.simv3-desktop,
+.simv3-module-screen {
+  min-height: 100vh;
+  background: #f8fafc;
+  color: #0f172a;
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+}
+
+.simv3-window-title {
+  height: 34px;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 16px;
+  padding: 0 10px;
+  background: #dc4254;
+  color: #fff;
+}
+
+.simv3-window-title div,
+.simv3-window-title button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.simv3-window-title span {
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.simv3-window-title button {
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.simv3-menu {
+  height: 28px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 6px;
+  border-bottom: 1px solid #dbe4ef;
+  background: #fff;
+}
+
+.simv3-menu button {
+  border: 0;
+  background: transparent;
+  color: #0f172a;
+  font-size: 12px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.simv3-login-screen {
+  display: grid;
+  grid-template-rows: 34px 1fr;
+}
+
+.simv3-login-card {
+  width: min(460px, calc(100vw - 32px));
+  align-self: center;
+  justify-self: center;
+  display: grid;
+  gap: 14px;
+  padding: 24px;
+  border: 1px solid #dbe4ef;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.14);
+}
+
+.simv3-login-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 8px;
+  color: #1e40af;
+}
+
+.simv3-login-brand h1 {
+  margin: 0;
+}
+
+.simv3-login-brand p {
+  margin: 4px 0 0;
+  color: #64748b;
+}
+
+.simv3-login-card label,
+.simv3-account-header label,
+.simv3-payment-fields label,
+.simv3-remarks {
+  display: grid;
+  gap: 5px;
+  color: #0d3c7a;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.simv3-login-card input,
+.simv3-login-card select,
+.simv3-account-header input,
+.simv3-filter-row select,
+.simv3-filter-row input,
+.simv3-module-toolbar input,
+.simv3-payment-form input,
+.simv3-payment-form select,
+.simv3-payment-form textarea,
+.simv3-ledger-tools select {
+  min-height: 30px;
+  border: 1px solid #c8d3df;
+  border-radius: 4px;
+  background: #fff;
+  color: #003b83;
+  font: inherit;
+}
+
+.simv3-login-card button,
+.simv3-module-toolbar button,
+.simv3-landing-filters button,
+.simv3-actionbar button,
+.simv3-ledger-tools button {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid #1e40af;
+  border-radius: 6px;
+  background: #1e40af;
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.simv3-landing-head {
+  display: grid;
+  grid-template-columns: 1fr minmax(360px, 0.58fr);
+  gap: 14px;
+  align-items: center;
+  padding: 10px 12px;
+  background: linear-gradient(90deg, #b7d6f5, #eef6ff);
+}
+
+.simv3-landing-head h1 {
+  margin: 0;
+  color: #fff;
+  font-size: 22px;
+  text-shadow: 0 1px 1px rgba(15, 23, 42, 0.25);
+}
+
+.simv3-landing-head p {
+  margin: 4px 0 0;
+  color: #003b83;
+  font-size: 20px;
+  font-weight: 800;
+  text-align: right;
+}
+
+.simv3-landing-filters {
+  display: grid;
+  grid-template-columns: 1fr 1fr 44px;
+  gap: 8px;
+}
+
+.simv3-landing-filters input,
+.simv3-landing-filters select {
+  min-height: 30px;
+  border: 1px solid #9fb9d4;
+}
+
+.simv3-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 0 12px;
+}
+
+.simv3-summary-panel {
+  border: 1px solid #8fb5dd;
+  background: #fff;
+}
+
+.simv3-summary-panel h3 {
+  margin: 0;
+  padding: 6px 10px;
+  background: #a9cdf0;
+  color: #fff;
+  font-size: 16px;
+}
+
+.simv3-summary-panel table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.simv3-summary-panel td {
+  padding: 4px 8px;
+  color: #003b83;
+}
+
+.simv3-summary-panel tr:nth-child(odd) {
+  background: #f3f7fc;
+}
+
+.simv3-summary-panel td:last-child {
+  text-align: right;
+  font-weight: 800;
+}
+
+.simv3-module-row {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(120px, 1fr));
+  gap: 28px;
+  align-items: center;
+  padding: 120px 36px 40px;
+}
+
+.simv3-module-row button {
+  display: grid;
+  place-items: center;
+  gap: 12px;
+  min-height: 132px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: #64748b;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.simv3-module-row button:hover {
+  background: #fff;
+  color: #1e40af;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.10);
+}
+
+.simv3-module-row svg {
+  color: #1e40af;
+  filter: drop-shadow(0 6px 6px rgba(15, 23, 42, 0.18));
+}
+
+.simv3-brand-footer {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  color: #64748b;
+}
+
+.simv3-brand-footer strong {
+  color: #1e5bd7;
+  font-size: 48px;
+  text-shadow: 2px 2px 0 #f59e0b;
+}
+
+.simv3-module-toolbar {
+  display: grid;
+  grid-template-columns: auto auto auto auto 1fr auto;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 12px;
+  background: #eef6ff;
+  border-bottom: 1px solid #c7d7eb;
+}
+
+.simv3-module-toolbar button {
+  min-height: 28px;
+  background: #fff;
+  color: #003b83;
+  border-color: #c8d3df;
+}
+
+.simv3-filter-row {
+  display: grid;
+  grid-template-columns: 170px 200px 200px 220px 150px;
+  gap: 8px;
+  padding: 10px 12px 4px;
+}
+
+.simv3-grid-wrap {
+  overflow: auto;
+  margin: 0 8px;
+  border: 1px solid #b8c8d8;
+  background: #fff;
+}
+
+.simv3-data-grid {
+  width: 100%;
+  min-width: 1180px;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.simv3-data-grid th,
+.simv3-data-grid td {
+  padding: 4px 6px;
+  border-right: 1px solid #c7ced8;
+  border-bottom: 1px solid #c7ced8;
+  white-space: nowrap;
+  color: #003b83;
+}
+
+.simv3-data-grid th {
+  background: #f8fafc;
+  color: #111827;
+  text-align: left;
+}
+
+.simv3-data-grid tbody tr:nth-child(odd) {
+  background: #f3f6fa;
+}
+
+.simv3-data-grid tbody tr:hover,
+.simv3-data-grid tbody tr:has(input:checked) {
+  background: #0b7fd3;
+}
+
+.simv3-data-grid tbody tr:hover td,
+.simv3-data-grid tbody tr:has(input:checked) td {
+  color: #fff;
+}
+
+.simv3-data-grid td:nth-child(n+7),
+.simv3-data-grid th:nth-child(n+7) {
+  text-align: right;
+}
+
+.simv3-data-grid tfoot td {
+  background: #fff;
+  font-weight: 900;
+}
+
+.simv3-grid-status,
+.simv3-actionbar {
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 8px;
+  border-top: 1px solid #c7d7eb;
+  background: #fff;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.simv3-grid-status strong {
+  padding: 6px 34px;
+  background: #0b7fd3;
+  color: #fff;
+}
+
+.simv3-grid-status button,
+.simv3-actionbar button {
+  margin-left: auto;
+  min-height: 28px;
+  background: transparent;
+  border: 0;
+  color: #0b57bd;
+}
+
+.simv3-actionbar button + button {
+  margin-left: 0;
+}
+
+.simv3-ledger-shell,
+.simv3-payment-form {
+  padding: 8px;
+}
+
+.simv3-account-header {
+  display: grid;
+  grid-template-columns: 150px minmax(280px, 2fr) minmax(180px, 1fr) repeat(3, 120px);
+  gap: 6px;
+  align-items: end;
+  padding: 8px;
+  border: 1px solid #d9e2ef;
+  background: #fff;
+}
+
+.simv3-account-header .wide {
+  grid-column: span 2;
+}
+
+.simv3-account-header input {
+  width: 100%;
+  padding: 0 6px;
+}
+
+.simv3-ledger-tools {
+  display: grid;
+  grid-template-columns: auto 220px auto 1fr 56px;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 4px;
+}
+
+.simv3-ledger-tools strong {
+  color: #0500a8;
+  font-size: 20px;
+  text-align: right;
+}
+
+.danger-text {
+  color: #dc2626 !important;
+  font-weight: 800;
+}
+
+.simv3-form-topline {
+  display: grid;
+  grid-template-columns: 200px 220px 180px;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.simv3-payment-body {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.65fr) 220px;
+  gap: 18px;
+  align-items: start;
+  margin-top: 10px;
+}
+
+.simv3-payment-fields {
+  display: grid;
+  grid-template-columns: 190px 220px;
+  gap: 10px;
+}
+
+.simv3-payment-fields label:nth-child(3),
+.simv3-remarks {
+  grid-column: 1 / -1;
+}
+
+.simv3-overdue-card {
+  border: 1px solid #b8c8d8;
+  background: #fff;
+}
+
+.simv3-overdue-card table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.simv3-overdue-card th,
+.simv3-overdue-card td {
+  padding: 5px;
+  border: 1px solid #c7ced8;
+  color: #003b83;
+}
+
+.simv3-overdue-card tbody tr:last-child {
+  background: #0b7fd3;
+}
+
+.simv3-overdue-card tbody tr:last-child td {
+  color: #fff;
+}
+
+.simv3-remarks {
+  margin-top: 10px;
+}
+
+.simv3-remarks textarea {
+  min-height: 80px;
+  padding: 8px;
+}
+
+@media (max-width: 1080px) {
+  .simv3-summary-grid,
+  .simv3-module-row,
+  .simv3-landing-head,
+  .simv3-payment-body {
+    grid-template-columns: 1fr;
+  }
+
+  .simv3-filter-row,
+  .simv3-account-header,
+  .simv3-payment-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
