@@ -26,6 +26,11 @@
   --text-muted: #667085;
   --accent: #2563eb;
   --accent-hover: #1d4ed8;
+  --nav-accent: #0f766e;
+  --nav-accent-strong: #164e63;
+  --nav-border: rgba(15, 118, 110, 0.2);
+  --nav-bg: linear-gradient(90deg, #f8fcff 0%, #eef8f6 54%, #edf4ff 100%);
+  --nav-shadow: 0 10px 24px rgba(15, 76, 88, 0.1);
   --success: #16875a;
   --success-hover: #0f6d47;
   --warning: #b7791f;
@@ -828,10 +833,10 @@ dd {
   min-height: 74px;
   margin: -4px -4px 12px;
   padding: 10px 14px;
-  border: 1px solid rgba(37, 99, 235, 0.14);
+  border: 1px solid var(--nav-border);
   border-radius: var(--radius-card);
-  background: linear-gradient(90deg, #ffffff 0%, #f7fbff 100%);
-  box-shadow: 0 8px 22px rgba(23, 32, 51, 0.06);
+  background: var(--nav-bg);
+  box-shadow: var(--nav-shadow);
 }
 
 .toolbar-identity {
@@ -848,7 +853,7 @@ dd {
   height: 42px;
   place-items: center;
   border-radius: 10px;
-  background: var(--accent);
+  background: linear-gradient(135deg, var(--accent) 0%, var(--nav-accent) 100%);
   color: #ffffff;
   font-size: 13px;
   font-weight: 900;
@@ -2654,9 +2659,9 @@ tbody tr:hover {
   align-items: center;
   margin: 0 -28px 10px;
   padding: 10px 28px;
-  border-bottom: 1px solid rgba(217, 224, 234, 0.72);
-  background: linear-gradient(90deg, #ffffff 0%, #f7fbff 100%);
-  box-shadow: 0 10px 22px rgba(23, 32, 51, 0.08);
+  border-bottom: 1px solid var(--nav-border);
+  background: var(--nav-bg);
+  box-shadow: var(--nav-shadow);
 }
 
 .toolbar h2 {
@@ -2671,7 +2676,7 @@ tbody tr:hover {
 
 .toolbar .operator-kicker {
   margin: 0 0 2px;
-  color: var(--color-primary);
+  color: var(--nav-accent-strong);
   font-size: 10px;
   font-weight: 900;
   text-transform: uppercase;
