@@ -13,7 +13,7 @@
         "desktop": "npm run tauri:dev",
         "build": "call npm.cmd run lint && call npm.cmd run test && call npm.cmd run typecheck:backend && call npx.cmd vite build --config vite.config.mjs --configLoader runner",
         "build:bridge": ".\\.venv\\Scripts\\python.exe -m PyInstaller --noconfirm --clean --onedir --name simsoft-python-bridge --distpath dist-python --workpath build-python --specpath build-python scripts\\python_bridge.py",
-        "test:python": ".\\.venv\\Scripts\\python.exe -m pytest tests -q -p no:cacheprovider",
+        "test:python": ".\\.venv\\Scripts\\python.exe -m pytest tests -q --basetemp .pytest-tmp-python -p no:cacheprovider",
         "verify": "npm run build && npm run test:python",
         "tauri:build": "npx tauri build",
         "release:updater:win": "powershell -ExecutionPolicy Bypass -File scripts\\build_updater_release.ps1",

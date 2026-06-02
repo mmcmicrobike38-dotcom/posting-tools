@@ -8,6 +8,16 @@ $targets = @(
   "dist",
   "dist-python",
   "build-python",
+  ".pytest-tmp-python",
+  ".pytest-tmp-release-bridge",
+  "src-tauri\target\release\bundle",
+  "src-tauri\target\release\nsis",
+  "src-tauri\target\release\wix",
+  "release\SIMSOFT_Setup.exe",
+  "release\SIMSOFT_Setup.exe.sig",
+  "release\SIMSOFT.msi",
+  "release\SIMSOFT_Portable.exe",
+  "release\SIMSOFT_Portable.zip",
   "release\portable",
   "release\logs"
 )

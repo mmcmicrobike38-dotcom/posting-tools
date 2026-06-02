@@ -11,6 +11,23 @@ New-Item -ItemType Directory -Force -Path $logDir | Out-Null
 $stamp = Get-Date -Format "yyyyMMdd-HHmmss"
 $logPath = Join-Path $logDir "release-build-$stamp.log"
 
+$updaterKeyPath = Join-Path $env:USERPROFILE ".tauri\posting-tools\updater.key"
+$updaterPasswordPath = Join-Path $env:USERPROFILE ".tauri\posting-tools\updater.key.password"
+
+function Configure-UpdaterSigning() {
+  if (-not (Test-Path -LiteralPath $updaterKeyPath)) {
+    throw "Updater private key not found at $updaterKeyPath"
+  }
+
+  if (-not (Test-Path -LiteralPath $updaterPasswordPath)) {
+    throw "Updater key password file not found at $updaterPasswordPath"
+  }
+
+  $env:TAURI_SIGNING_PRIVATE_KEY = Get-Content -Raw -LiteralPath $updaterKeyPath
+  $env:TAURI_SIGNING_PRIVATE_KEY_PASSWORD = (Get-Content -Raw -LiteralPath $updaterPasswordPath).Trim()
+  Write-Host "Updater signing key loaded from $updaterKeyPath" -ForegroundColor Cyan
+}
+
 function Run-Step($Name, $Command, $Arguments) {
   Write-Host "== $Name ==" -ForegroundColor Cyan
   Add-Content -Path $logPath -Value "== $Name =="
@@ -140,6 +157,7 @@ function Repair-NsisBundle() {
   Copy-Item -LiteralPath $actualInstaller -Destination $expectedInstaller -Force
 }
 
+Configure-UpdaterSigning
 Run-Step "doctor" "powershell" @("-ExecutionPolicy", "Bypass", "-File", "scripts\doctor.ps1", "-Strict")
 
 if (-not $SkipVerify) {
@@ -172,6 +190,10 @@ $msi = Get-ChildItem -Path $bundleDir -Recurse -Filter "*.msi" -ErrorAction Sile
 
 if ($setup) {
   Copy-Item -LiteralPath $setup.FullName -Destination (Join-Path $releaseDir "SIMSOFT_Setup.exe") -Force
+  $setupSignature = "$($setup.FullName).sig"
+  if (Test-Path -LiteralPath $setupSignature) {
+    Copy-Item -LiteralPath $setupSignature -Destination (Join-Path $releaseDir "SIMSOFT_Setup.exe.sig") -Force
+  }
 }
 if ($msi) {
   Copy-Item -LiteralPath $msi.FullName -Destination (Join-Path $releaseDir "SIMSOFT.msi") -Force
@@ -179,6 +201,7 @@ if ($msi) {
 
 Assert-ReleaseArtifact (Join-Path $releaseDir "SIMSOFT_Portable.zip") "Portable ZIP" 20
 Assert-ReleaseArtifact (Join-Path $releaseDir "SIMSOFT_Setup.exe") "NSIS setup executable" 20
+Assert-Artifact (Join-Path $releaseDir "SIMSOFT_Setup.exe.sig") "NSIS updater signature"
 Assert-ReleaseArtifact (Join-Path $releaseDir "SIMSOFT.msi") "MSI installer" 20
 
 Write-Host "Release build completed. Log: $logPath" -ForegroundColor Green
