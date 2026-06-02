@@ -1,6 +1,6 @@
 [package]
 name = "simsoft-posting"
-version = "1.0.0"
+version = "1.0.1"
 description = "Posting Tools desktop shell"
 authors = ["SIMSOFT"]
 edition = "2021"
