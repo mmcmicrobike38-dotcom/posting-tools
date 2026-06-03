@@ -5,7 +5,7 @@ const preferredPreviewColumns: Record<PreviewTab, string[]> = {
   ACCOUNTS: ["Account", "Account Name", "OR Number", "Actual Collection", "Code", "Remarks"],
   RECIEPT: ["Date", "OR Number", "Transaction", "Amount", "Remarks"],
   DAILY: ["Date", "OR Number", "Amount", "Account", "Remarks"],
-  "SCR VS BR": ["Date", "OR Number", "Amount", "Account", "Remarks"]
+  "SCR VS BR": ["SCR DATE", "ORs", "SCR AMOUNT", "Status", "Issue", "Target Row"]
 };
 
 export function friendlyIssueText(message: string) {

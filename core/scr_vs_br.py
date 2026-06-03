@@ -12,7 +12,6 @@ from .parser import normalize_text, parse_amount, parse_date
 BLOCK_NAMES = ["BRANCH RECEIPT 1", "BRANCH RECEIPT 2", "COLLECTOR RECEIPT 2", "COLLECTOR RECEIPT 3"]
 SCR_TAB = "SCR VS BR"
 SCR_DATE_COL = 1
-SCR_AMOUNT_COL = 2
 RECEIPT_BLOCKS = [
     {"Block": "BRANCH RECEIPT", "from_col": 4, "to_col": 5, "amount_col": 6},
     {"Block": "COLLECTOR RECEIPT 1", "from_col": 7, "to_col": 8, "amount_col": 9},
@@ -260,6 +259,78 @@ def find_scr_date_rows(sheet_rows: list[list[Any]]) -> dict[str, int]:
         if iso_date:
             date_rows[iso_date] = row_number
     return date_rows
+
+
+def _scr_group_total(group: pd.DataFrame) -> Decimal:
+    total = Decimal("0.00")
+    for value in group.get("Actual Collection", []):
+        try:
+            total += parse_amount(value)
+        except ValueError:
+            continue
+    return total
+
+
+def _scr_or_amounts(group: pd.DataFrame) -> dict[int, Decimal]:
+    or_amounts: dict[int, Decimal] = {}
+    for row in group.to_dict("records"):
+        or_text = normalize_text(row.get("OR Number"))
+        if not or_text.isdigit():
+            continue
+        try:
+            or_amounts[int(or_text)] = parse_amount(row.get("Actual Collection"))
+        except ValueError:
+            continue
+    return or_amounts
+
+
+def _scr_review_issue(group: pd.DataFrame) -> str:
+    issues: list[str] = []
+    for row in group.to_dict("records"):
+        status = normalize_text(row.get("Status"))
+        issue = normalize_text(row.get("Issue"))
+        if issue and status:
+            issues.append(f"{status}: {issue}")
+        elif issue:
+            issues.append(issue)
+        elif status:
+            issues.append(status)
+    return "; ".join(dict.fromkeys(issues))
+
+
+def _append_scr_review_records(
+    records: list[dict[str, Any]],
+    *,
+    iso_date: str,
+    target_row: int | None,
+    total_collection: Decimal,
+    or_amounts: dict[int, Decimal],
+    status: str,
+    issue: str,
+) -> None:
+    ranges = contiguous_or_ranges(or_amounts) if or_amounts else [{"FROM": "", "TO": "", "AMOUNT": total_collection, "ORs": [], "Skipped ORs": []}]
+    for or_range in ranges:
+        from_or = or_range.get("FROM", "")
+        to_or = or_range.get("TO", "")
+        or_numbers = [str(number) for number in or_range.get("ORs", [])]
+        records.append(
+            {
+                "Target Tab": SCR_TAB,
+                "SCR DATE": iso_date,
+                "Date": iso_date,
+                "SCR AMOUNT": total_collection,
+                "Amount": or_range.get("AMOUNT", total_collection),
+                "Target Row": target_row or "",
+                "FROM": from_or,
+                "TO": to_or if from_or != to_or else "",
+                "ORs": ", ".join(or_numbers),
+                "OR Number": ", ".join(or_numbers),
+                "Skipped ORs": ", ".join(str(number) for number in or_range.get("Skipped ORs", [])),
+                "Status": status,
+                "Issue": issue,
+                "Remarks": issue,
+            }
+        )
 
 
 def contiguous_or_ranges(or_amounts: dict[int, Decimal]) -> list[dict[str, Any]]:
@@ -971,34 +1042,52 @@ def prepare_scr_vs_br_updates(parsed_df: pd.DataFrame, sheet_rows: list[list[Any
     records: list[dict[str, Any]] = []
     updates: list[dict[str, Any]] = []
     errors: list[str] = []
-    passed = parsed_df[parsed_df["Status"] == "PASSED"] if "Status" in parsed_df else pd.DataFrame()
-    if passed.empty:
+    if parsed_df.empty or "Date" not in parsed_df:
         return pd.DataFrame(), updates, errors
 
     date_rows = find_scr_date_rows(sheet_rows)
+    if "Status" in parsed_df:
+        status = parsed_df["Status"].astype(str)
+        passed = parsed_df[status == "PASSED"]
+        skipped = parsed_df[status != "PASSED"]
+    else:
+        passed = parsed_df
+        skipped = pd.DataFrame()
+
+    for scr_date, group in skipped.groupby("Date", dropna=False):
+        iso_date = normalize_text(scr_date)
+        if not iso_date:
+            continue
+        _append_scr_review_records(
+            records,
+            iso_date=iso_date,
+            target_row=date_rows.get(iso_date),
+            total_collection=_scr_group_total(group),
+            or_amounts=_scr_or_amounts(group),
+            status="SKIPPED",
+            issue=_scr_review_issue(group) or "Source row is not postable.",
+        )
+
+    if passed.empty:
+        return pd.DataFrame(records), updates, errors
+
     receipt_groups = receipt_block_groups(receipt_preview)
     for scr_date, group in passed.groupby("Date"):
         iso_date = normalize_text(scr_date)
         target_row = date_rows.get(iso_date)
-        total_collection = sum((parse_amount(value) for value in group["Actual Collection"]), Decimal("0.00"))
-        or_amounts = {
-            int(row["OR Number"]): parse_amount(row["Actual Collection"])
-            for row in group.to_dict("records")
-            if normalize_text(row.get("OR Number")).isdigit()
-        }
+        total_collection = _scr_group_total(group)
+        or_amounts = _scr_or_amounts(group)
         if target_row is None:
             errors.append(f"SCR VS BR date not found: {iso_date}")
-            for or_range in contiguous_or_ranges(or_amounts):
-                records.append(
-                    {
-                        "Target Tab": SCR_TAB,
-                        "SCR DATE": iso_date,
-                        "Target Row": "",
-                        **or_range,
-                        "Status": "ERROR",
-                        "Issue": "SCR date not found",
-                    }
-                )
+            _append_scr_review_records(
+                records,
+                iso_date=iso_date,
+                target_row=None,
+                total_collection=total_collection,
+                or_amounts=or_amounts,
+                status="ERROR",
+                issue="SCR date not found",
+            )
             continue
 
         target_values = sheet_rows[target_row - 1] if target_row - 1 < len(sheet_rows) else []
@@ -1099,10 +1188,6 @@ def prepare_scr_vs_br_updates(parsed_df: pd.DataFrame, sheet_rows: list[list[Any
                     "collection_date": iso_date,
                 }
             )
-
-        if updated_cols or cleared_cols:
-            working_cells[SCR_AMOUNT_COL] = decimal_to_display(total_collection)
-            updated_cols.add(SCR_AMOUNT_COL)
 
         touched_cols = sorted(updated_cols | cleared_cols)
         updates.extend({"row": target_row, "col": col, "value": working_cells[col]} for col in touched_cols)

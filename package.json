@@ -1,6 +1,6 @@
 {
     "name": "posting-tools",
-    "version": "1.0.1",
+    "version": "1.0.3",
     "private": true,
     "description": "Tauri + React + TypeScript desktop app for posting automation.",
     "scripts": {

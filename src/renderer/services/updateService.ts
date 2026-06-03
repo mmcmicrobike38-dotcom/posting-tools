@@ -25,6 +25,10 @@ function isTauriRuntime() {
   return typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
 }
 
+function updateErrorMessage(action: string, error: unknown) {
+  return error instanceof Error && error.message ? `${action}: ${error.message}` : action;
+}
+
 export function useAppUpdater(): AppUpdateController {
   const updateRef = useRef<Update | null>(null);
   const mountedRef = useRef(true);
@@ -66,7 +70,7 @@ export function useAppUpdater(): AppUpdateController {
       }
     } catch (nextError) {
       console.error("Updater check failed", nextError);
-      setError("Update check failed");
+      setError(updateErrorMessage("Update check failed", nextError));
       updateRef.current = null;
       updateState("error");
     }
@@ -107,7 +111,7 @@ export function useAppUpdater(): AppUpdateController {
       if (shouldRestart) await restartApp();
     } catch (nextError) {
       console.error("Updater install failed", nextError);
-      setError("Update install failed");
+      setError(updateErrorMessage("Update install failed", nextError));
       updateState("available", update.version, update.body);
     }
   }, [restartApp, status, updateState]);

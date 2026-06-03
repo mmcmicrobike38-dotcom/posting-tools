@@ -878,14 +878,16 @@ dd {
   align-items: center;
   justify-content: center;
   gap: 8px;
+  flex: 0 0 auto;
+  min-width: 0;
 }
 
 .toolbar-update-slot {
   display: flex;
-  flex: 1 1 240px;
+  flex: 0 0 auto;
   align-items: center;
   justify-content: flex-end;
-  min-width: 180px;
+  min-width: 0;
 }
 
 .app-version-badge {
@@ -941,6 +943,17 @@ dd {
   border-color: rgba(183, 121, 31, 0.32);
   background: var(--warning-soft);
   color: var(--warning-hover);
+}
+
+.update-patch-button.error {
+  border-color: rgba(217, 45, 32, 0.32);
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.update-patch-button.error:hover:not(:disabled) {
+  border-color: rgba(217, 45, 32, 0.52);
+  background: #ffe3e0;
 }
 
 .update-patch-button svg {
@@ -2243,6 +2256,7 @@ tbody tr:hover {
 .toolbar-status-group {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   justify-content: flex-end;
   gap: 7px;
 }
@@ -2657,11 +2671,16 @@ tbody tr:hover {
   top: 0;
   z-index: 40;
   align-items: center;
+  justify-content: flex-start;
   margin: 0 -28px 10px;
   padding: 10px 28px;
   border-bottom: 1px solid var(--nav-border);
   background: var(--nav-bg);
   box-shadow: var(--nav-shadow);
+}
+
+.toolbar-identity {
+  margin-right: auto;
 }
 
 .toolbar h2 {
@@ -2680,6 +2699,41 @@ tbody tr:hover {
   font-size: 10px;
   font-weight: 900;
   text-transform: uppercase;
+}
+
+.toolbar .toolbar-status-group {
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.toolbar .toolbar-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 36px;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.toolbar .app-version-badge.toolbar-chip {
+  min-width: 86px;
+}
+
+.toolbar .badge.toolbar-chip {
+  min-width: 70px;
+  padding: 0 14px;
+  color: var(--text-muted);
+}
+
+.toolbar .badge.toolbar-chip.danger-badge {
+  color: var(--danger);
 }
 
 .badge {

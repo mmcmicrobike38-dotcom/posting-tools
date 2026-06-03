@@ -1779,7 +1779,7 @@ def test_scr_vs_br_updates_match_date_and_continue_nearest_block():
     assert preview.iloc[0]["FROM"] == 5163
     assert preview.iloc[0]["TO"] == 5166
     values_by_col = {update["col"]: update["value"] for update in updates if update["row"] == 3}
-    assert values_by_col[2] == "8255.00"
+    assert 2 not in values_by_col
     assert values_by_col[7] == "5163"
     assert values_by_col[8] == "5166"
     assert values_by_col[9] == "=2202+1953+2000+2100"
@@ -1819,6 +1819,57 @@ def test_scr_layout_preview_includes_previous_date_or_context():
     assert layout["rows"][3][0] == "27-Nov-25"
     assert layout["rows"][4][0] == "01-Dec-25"
     assert layout["rows"][4][3] == "5005"
+
+
+def test_scr_vs_br_reports_skipped_source_rows_when_no_rows_are_postable():
+    parsed, _ = parse_and_validate_simsoft(
+        pd.DataFrame(
+            [
+                simsoft_row(Date="2025-12-22", Reference="5101 - (14/36 MI)", Amount="1000", Interest="0"),
+                simsoft_row(Date="2025-12-23", Reference="5102 - (15/36 MI)", Amount="1000", Interest="0"),
+            ]
+        ),
+        set(),
+    )
+    parsed["Status"] = "DUPLICATE"
+    parsed["Issue"] = "Already reviewed in ACCOUNTS"
+    rows = [
+        ["SCR DATE", "AMOUNT", "", "FROM", "TO", "AMOUNT"],
+        ["22-Dec-25", "", "", "", "", ""],
+        ["23-Dec-25", "", "", "", "", ""],
+    ]
+
+    preview, updates, errors = prepare_scr_vs_br_updates(parsed, rows)
+
+    assert updates == []
+    assert errors == []
+    assert list(preview["SCR DATE"]) == ["2025-12-22", "2025-12-23"]
+    assert list(preview["Status"]) == ["SKIPPED", "SKIPPED"]
+    assert all("Already reviewed in ACCOUNTS" in issue for issue in preview["Issue"])
+
+
+def test_scr_vs_br_reports_missing_december_dates_when_no_updates_can_be_planned():
+    parsed, _ = parse_and_validate_simsoft(
+        pd.DataFrame(
+            [
+                simsoft_row(Date="2025-12-22", Reference="5101 - (14/36 MI)", Amount="1000", Interest="0"),
+                simsoft_row(Date="2025-12-23", Reference="5102 - (15/36 MI)", Amount="1000", Interest="0"),
+            ]
+        ),
+        set(),
+    )
+    rows = [
+        ["SCR DATE", "AMOUNT", "", "FROM", "TO", "AMOUNT"],
+        ["01-Jan-25", "", "", "", "", ""],
+        ["02-Jan-25", "", "", "", "", ""],
+    ]
+
+    preview, updates, errors = prepare_scr_vs_br_updates(parsed, rows)
+
+    assert updates == []
+    assert errors == ["SCR VS BR date not found: 2025-12-22", "SCR VS BR date not found: 2025-12-23"]
+    assert list(preview["SCR DATE"]) == ["2025-12-22", "2025-12-23"]
+    assert list(preview["Status"]) == ["ERROR", "ERROR"]
 
 
 def test_scr_vs_br_other_day_continueable_uses_normal_append_placement():
@@ -2167,7 +2218,7 @@ def test_scr_vs_br_updates_split_december_first_like_sheet():
     assert records[(5037, "")]["Block"] == "COLLECTOR RECEIPT 1"
     assert records[(5037, "")]["AMOUNT"] == Decimal("1000.00")
     values_by_col = {update["col"]: update["value"] for update in updates if update["row"] == 5}
-    assert values_by_col[2] == "8707.00"
+    assert 2 not in values_by_col
     assert values_by_col[4] == "5080"
     assert values_by_col[5] == "5083"
     assert values_by_col[6] == "=2000+2000+1910+1797"
@@ -2699,7 +2750,7 @@ def test_scr_vs_br_replaces_wrong_same_day_overlap_with_correct_blocks():
     _, updates, errors = prepare_scr_vs_br_updates(parsed, rows)
     assert errors == []
     values_by_col = {update["col"]: update["value"] for update in updates if update["row"] == 5}
-    assert values_by_col[2] == "8707.00"
+    assert 2 not in values_by_col
     assert values_by_col[4] == "5080"
     assert values_by_col[5] == "5083"
     assert values_by_col[6] == "=2000+2000+1910+1797"
@@ -2762,7 +2813,7 @@ def test_scr_vs_br_keeps_skipped_or_in_range_with_zero_amount():
     assert preview.iloc[0]["TO"] == 19066
     assert preview.iloc[0]["Skipped ORs"] == "19065"
     values_by_col = {update["col"]: update["value"] for update in updates if update["row"] == 3}
-    assert values_by_col[2] == "3266.00"
+    assert 2 not in values_by_col
     assert values_by_col[4] == "19064"
     assert values_by_col[5] == "19066"
     assert values_by_col[6] == "=2166+1100"
@@ -2788,7 +2839,7 @@ def test_scr_vs_br_appends_multiple_ranges_to_same_block_on_same_date():
     _, updates, errors = prepare_scr_vs_br_updates(parsed, rows)
     assert errors == []
     values_by_col = {update["col"]: update["value"] for update in updates if update["row"] == 3}
-    assert values_by_col[2] == "10000.00"
+    assert 2 not in values_by_col
     assert values_by_col[13] == "18045\n18101"
     assert values_by_col[14] == "18046\n18102"
     assert values_by_col[15] == "=7486+1000+2000"

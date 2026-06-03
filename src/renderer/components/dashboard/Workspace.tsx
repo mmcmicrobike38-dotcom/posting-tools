@@ -16,40 +16,62 @@ interface WorkspaceProps {
 }
 
 function UpdatePatchButton({ updater }: { updater: AppUpdateController }) {
-  const visible = updater.status === "available" || updater.status === "downloading" || updater.status === "installing" || updater.status === "readyToRestart";
+  const visible =
+    updater.status === "checking" ||
+    updater.status === "error" ||
+    updater.status === "available" ||
+    updater.status === "downloading" ||
+    updater.status === "installing" ||
+    updater.status === "readyToRestart";
   if (!visible) {
     return (
-      <span className="app-version-badge" title="Installed app version">
+      <span className="app-version-badge toolbar-chip" title="Installed app version">
         v{updater.appVersion}
       </span>
     );
   }
 
   const progress = updater.contentLength ? Math.min(99, Math.round((updater.downloadedBytes / updater.contentLength) * 100)) : undefined;
-  const isBusy = updater.status === "downloading" || updater.status === "installing";
+  const isChecking = updater.status === "checking";
+  const isError = updater.status === "error";
+  const isBusy = isChecking || updater.status === "downloading" || updater.status === "installing";
   const isRestartReady = updater.status === "readyToRestart";
   const label = isRestartReady
     ? "Restart"
-    : updater.status === "installing"
-      ? "Installing"
-      : updater.status === "downloading"
-        ? progress
-          ? `Downloading ${progress}%`
-          : "Downloading"
-        : updater.version
-          ? `Update ${updater.version}`
-          : "Update";
+    : isError
+      ? "Retry update"
+      : isChecking
+        ? "Checking"
+        : updater.status === "installing"
+          ? "Installing"
+          : updater.status === "downloading"
+            ? progress
+              ? `Downloading ${progress}%`
+              : "Downloading"
+            : updater.version
+              ? `Update ${updater.version}`
+              : "Update";
+  const buttonClassName = [
+    "update-patch-button",
+    "toolbar-chip",
+    isRestartReady ? "restart-ready" : "",
+    isBusy ? "loading" : "",
+    isError ? "error" : ""
+  ]
+    .filter(Boolean)
+    .join(" ");
+  const clickHandler = isRestartReady ? updater.restartApp : isError ? updater.checkForUpdates : updater.installUpdate;
 
   return (
     <button
-      className={isRestartReady ? "update-patch-button restart-ready" : isBusy ? "update-patch-button loading" : "update-patch-button"}
+      className={buttonClassName}
       type="button"
-      onClick={isRestartReady ? updater.restartApp : updater.installUpdate}
+      onClick={() => void clickHandler()}
       disabled={isBusy}
-      aria-label={isRestartReady ? "Restart to finish update" : "Download and install update"}
-      title={updater.body || label}
+      aria-label={isRestartReady ? "Restart to finish update" : isError ? "Retry update check" : "Download and install update"}
+      title={isError ? updater.error || "Update check failed" : updater.body || label}
     >
-      {isRestartReady ? <RotateCw aria-hidden="true" size={15} /> : <Download aria-hidden="true" size={15} />}
+      {isRestartReady || isChecking || isError ? <RotateCw aria-hidden="true" size={15} /> : <Download aria-hidden="true" size={15} />}
       <span>{label}</span>
     </button>
   );
@@ -465,13 +487,13 @@ export function Workspace({ dashboard, updater }: WorkspaceProps) {
             <p>{operatorRole}</p>
           </div>
         </div>
-        <div className="toolbar-update-slot" aria-live="polite">
+        <div className="toolbar-update-slot toolbar-status-group" aria-live="polite" aria-label="Current app version">
           <UpdatePatchButton updater={updater} />
         </div>
         <div className="toolbar-actions">
           <div className="toolbar-status-group" aria-label="Current posting context">
-            <span className={hasErrors ? "badge danger-badge" : "badge"}>{hasErrors ? "Needs attention" : "Ready"}</span>
-            <span className="badge">Branch: {state.selectedBranchId || "Not selected"}</span>
+            <span className={hasErrors ? "badge toolbar-chip danger-badge" : "badge toolbar-chip"}>{hasErrors ? "Needs attention" : "Ready"}</span>
+            <span className="badge toolbar-chip">Branch: {state.selectedBranchId || "Not selected"}</span>
           </div>
           <button className="info-button" onClick={() => actions.setActiveModal("aboutPostingReview")} aria-label="About posting review" title="About Posting Review">
             i

@@ -5,6 +5,10 @@ import { displayValue, previewTitle, usefulPreviewColumns } from "./workspaceFor
 
 const PREVIEW_ROW_LIMIT = 150;
 
+export function shouldShowSheetLayout(layout: SheetLayoutPreview | undefined, rowCount: number) {
+  return Boolean(layout?.rows.length && ((layout.updatedCells?.length ?? 0) > 0 || rowCount === 0));
+}
+
 function SheetPreviewDetail({
   title,
   columns,
@@ -23,18 +27,19 @@ function SheetPreviewDetail({
     [layout]
   );
   const displayedRows = useMemo(() => rows.slice(0, PREVIEW_ROW_LIMIT), [rows]);
+  const showSheetLayout = shouldShowSheetLayout(layout, rows.length);
 
   return (
     <section className="sheet-preview-detail" aria-label={`${title} selected tab details`}>
       <div className="sheet-preview-detail-title">
         <h3>{previewTitle(title)}</h3>
-        <span>{layout ? `${layout.updatedCells.length} planned update(s)` : `${rows.length} row(s)`}</span>
+        <span>{showSheetLayout ? `${layout?.updatedCells.length ?? 0} planned update(s)` : `${rows.length} row(s)`}</span>
       </div>
-      {layout?.rows.length ? (
+      {showSheetLayout ? (
         <div className="sheet-layout-table">
           <table>
             <tbody>
-              {layout.rows.map((row, rowIndex) => (
+              {layout?.rows.map((row, rowIndex) => (
                 <tr key={rowIndex}>
                   <th>{rowIndex + 1}</th>
                   {Array.from({ length: Math.max(row.length, 1) }).map((_, colIndex) => (
